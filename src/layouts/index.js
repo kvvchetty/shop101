@@ -1,75 +1,52 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import Helmet from 'react-helmet'
 import Link from 'gatsby-link'
 
-import { rhythm, scale } from '../utils/typography'
+import '../style/index.scss'
 
-class Template extends React.Component {
-  render() {
-    const { location, children } = this.props
-    let header
-
-    let rootPath = `/`
-    if (typeof __PREFIX_PATHS__ !== `undefined` && __PREFIX_PATHS__) {
-      rootPath = __PATH_PREFIX__ + `/`
-    }
-
-    if (location.pathname === rootPath) {
-      header = (
-        <h1
-          style={{
-            ...scale(1.5),
-            marginBottom: rhythm(1.5),
-            marginTop: 0,
-          }}
-        >
-          <Link
-            style={{
-              boxShadow: 'none',
-              textDecoration: 'none',
-              color: 'inherit',
-            }}
-            to={'/'}
-          >
-            Gatsby Starter Blog
-          </Link>
-        </h1>
-      )
-    } else {
-      header = (
-        <h3
-          style={{
-            fontFamily: 'Montserrat, sans-serif',
-            marginTop: 0,
-            marginBottom: rhythm(-1),
-          }}
-        >
-          <Link
-            style={{
-              boxShadow: 'none',
-              textDecoration: 'none',
-              color: 'inherit',
-            }}
-            to={'/'}
-          >
-            Gatsby Starter Blog
-          </Link>
-        </h3>
-      )
-    }
-    return (
-      <div
-        style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          maxWidth: rhythm(24),
-          padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
-        }}
-      >
-        {header}
-        {children()}
+const Layout = ({ children, site }) => (
+  <div>
+    <Helmet title="Snipcart + DatoCMS + GatsbyJS Example" />
+    <div className="Container">
+      <div className="Header">
+        <div className="Wrap" >
+          <div className="Header__body">
+            <h1 className="Header__title">
+              <Link data-text={site.siteMetadata.siteName} to="/">
+                {site.siteMetadata.siteName}
+              </Link>
+            </h1>
+            <div className="Header__summary snipcart-summary snipcart-checkout">
+              <div className="Header__summary__title">
+                🛍 MY CART 🛍
+              </div>
+              <div className="Header__summary__line">
+                Number of items: <span className="snipcart-total-items"></span>
+              </div>
+              <div className="Header__summary__line">
+                Total price: <span className="snipcart-total-price"></span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    )
-  }
+      <div className="Wrap" >
+        {children}
+      </div>
+      <div className="Wrap" >
+        <div className="Footer">
+          This website is just an example project to demonstrate how you can 
+          integrate <a href="https://www.gatsbyjs.org/">Gatsby</a>, <a href="https://snipcart.com/">Snipcart</a> and <a href="https://www.datocms.com">DatoCMS</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
+Layout.propTypes = {
+  children: PropTypes.func,
 }
 
-export default Template
+export default Layout
+

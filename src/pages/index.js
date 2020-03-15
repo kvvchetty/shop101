@@ -1,65 +1,65 @@
 import React from 'react'
-import Link from 'gatsby-link'
-import get from 'lodash/get'
-import Helmet from 'react-helmet'
+import { StaticQuery, graphql } from 'gatsby'
+import Layout from "../layouts/index"
+import Img from 'gatsby-image'
 
-import Bio from '../components/Bio'
-import { rhythm } from '../utils/typography'
-
-class BlogIndex extends React.Component {
-  render() {
-    const siteTitle = get(this, 'props.data.site.siteMetadata.title')
-    const posts = get(this, 'props.data.allMarkdownRemark.edges')
-
-    return (
-      <div>
-        <Helmet title={siteTitle} />
-        <Bio />
-        {posts.map(({ node }) => {
-          const title = get(node, 'frontmatter.title') || node.fields.slug
-          return (
-            <div key={node.fields.slug}>
-              <h3
-                style={{
-                  marginBottom: rhythm(1 / 4),
-                }}
-              >
-                <Link style={{ boxShadow: 'none' }} to={node.fields.slug}>
-                  {title}
-                </Link>
-              </h3>
-              <small>{node.frontmatter.date}</small>
-              <p dangerouslySetInnerHTML={{ __html: node.excerpt }} />
-            </div>
-          )
-        })}
-      </div>
-    )
-  }
-}
-
-export default BlogIndex
-
-export const pageQuery = graphql`
-  query IndexQuery {
-    site {
-      siteMetadata {
-        title
-      }
-    }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
-      edges {
-        node {
-          excerpt
-          fields {
-            slug
+export default () => (
+  <StaticQuery
+    query={graphql`
+      query CatalogueQuery {
+        products: allDatoCmsProduct {
+          edges {
+            node {
+              id
+              name
+              price
+              image {
+                url
+                sizes(maxWidth: 300, imgixParams: { fm: "jpg" }) {
+                  ...GatsbyDatoCmsSizes
+                }
+              }
+            }
           }
-          frontmatter {
-            date(formatString: "DD MMMM, YYYY")
-            title
+        }
+        site {
+          siteMetadata {
+            siteName
           }
         }
       }
-    }
-  }
-`
+    `}
+render={data => (
+  <Layout site={data.site}>
+    <div className="Catalogue">
+      {
+        data.products.edges.map(({ node: product }) => (
+          <div className="Catalogue__item" key={product.id}>
+            <div
+              className="Product snipcart-add-item"
+              data-item-id={product.id}
+              data-item-price={product.price}
+              data-item-image={product.image.url}
+              data-item-name={product.name}
+              data-item-url={`/`}
+            >
+              <div className="Product__image">
+                <Img sizes={product.image.sizes} />
+              </div> <div className="Product__details">
+                <div className="Product__name">
+                  {product.name}
+                  <div className="Product__price">
+                    {product.price}€
+                  </div>
+                </div>
+                <span className="Product__buy">Buy now</span>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </Layout>
+     )}
+   />
+)
